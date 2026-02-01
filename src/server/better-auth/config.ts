@@ -12,12 +12,13 @@ export const auth = betterAuth({
     enabled: true,
   },
   socialProviders: {
-    github: {
-      clientId: env.BETTER_AUTH_GITHUB_CLIENT_ID,
-      clientSecret: env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
-      redirectURI: "http://localhost:3000/api/auth/callback/github",
+    facebook: {
+      clientId: env.BETTER_AUTH_FACEBOOK_CLIENT_ID as string,
+      clientSecret: env.BETTER_AUTH_FACEBOOK_CLIENT_SECRET as string,
+      redirectURI: "http://localhost:3000/api/auth/callback/facebook",
     },
   },
+  baseURL: process.env.BETTER_AUTH_BASE_URL || "http://localhost:3000",
 });
 
 export type Session = typeof auth.$Infer.Session;
