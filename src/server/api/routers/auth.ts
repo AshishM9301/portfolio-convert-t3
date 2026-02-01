@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { auth } from "@/server/better-auth";
+import { db } from "@/server/db";
 import { headers } from "next/headers";
 
 export const authRouter = createTRPCRouter({
@@ -24,7 +25,7 @@ export const authRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       try {
-        const result = await auth.api.signInEmailPassword({
+        const result = await auth.api.signInEmail({
           body: {
             email: input.email,
             password: input.password,
@@ -62,8 +63,8 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         // Check if user already exists
-        const existingUser = await auth.api.getUserByEmail({
-          body: { email: input.email },
+        const existingUser = await db.user.findUnique({
+          where: { email: input.email },
         });
 
         if (existingUser) {
@@ -74,7 +75,7 @@ export const authRouter = createTRPCRouter({
         }
 
         // Create new user
-        await auth.api.signUpEmailPassword({
+        await auth.api.signUpEmail({
           body: {
             email: input.email,
             password: input.password,
@@ -86,7 +87,7 @@ export const authRouter = createTRPCRouter({
         return { success: true, message: "Registration successful" };
       } catch (error) {
         if (error instanceof TRPCError) throw error;
-        
+
         console.error("Registration error:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
