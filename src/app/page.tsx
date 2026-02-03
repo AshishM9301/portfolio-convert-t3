@@ -305,10 +305,10 @@ export default function Home() {
         <SectionHeading title="Education" />
         <div className="mb-4">
           <div className="flex justify-between mb-1">
-            <h3 className="font-medium">Bachelor of Technology in Computer Science</h3>
+            <h3 className="font-medium">Bachelor of Technology in Mechanical Engineering</h3>
             <span className="text-sm text-gray-600 dark:text-gray-400">2016 - 2020</span>
           </div>
-          <p className="text-sm text-gray-700 dark:text-gray-300">University Name, Location</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">KIIT, Bhubaneswar</p>
         </div>
       </section>
 
@@ -326,10 +326,10 @@ export default function Home() {
         </p>
 
         <div className="flex space-x-6 mb-6">
-          <Link href="#" aria-label="LinkedIn" className="p-2 rounded-full border border-gray-300 dark:border-gray-700">
+          <Link href="https://www.linkedin.com/in/ashish-kr-mahto-647a86390/" target="_blank" aria-label="LinkedIn" className="p-2 rounded-full border border-gray-300 dark:border-gray-700">
             <Linkedin className="w-5 h-5" />
           </Link>
-          <Link href="#" aria-label="Twitter/X" className="p-2 rounded-full border border-gray-300 dark:border-gray-700">
+          <Link href="https://x.com/AshishM9301" target="_blank" aria-label="Twitter/X" className="p-2 rounded-full border border-gray-300 dark:border-gray-700">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -352,18 +352,20 @@ export default function Home() {
           >
             <Mail className="w-5 h-5" />
           </Link>
-          <Link href="#" aria-label="GitHub" className="p-2 rounded-full border border-gray-300 dark:border-gray-700">
+          <Link href="https://github.com/AshishM9301" target="_blank" aria-label="GitHub" className="p-2 rounded-full border border-gray-300 dark:border-gray-700">
             <Github className="w-5 h-5" />
           </Link>
           <Link
-            href="#"
+            href="https://www.instagram.com/ashish13005/"
+            target="_blank"
             aria-label="Instagram"
             className="p-2 rounded-full border border-gray-300 dark:border-gray-700"
           >
             <Instagram className="w-5 h-5" />
           </Link>
           <Link
-            href="#"
+            href="https://ashishmahto.com"
+            target="_blank"
             aria-label="External Link"
             className="p-2 rounded-full border border-gray-300 dark:border-gray-700"
           >

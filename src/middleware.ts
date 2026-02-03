@@ -2,11 +2,19 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Public paths that don't require authentication
+// Note: /login and /register are public so unauthenticated users can access them
+// Authenticated users are handled client-side (redirected to home)
 const publicPaths = ["/", "/login", "/register", "/api/auth"];
 
 // Check if path is public
 function isPublicPath(path: string): boolean {
-    return publicPaths.some((publicPath) => path === publicPath || path.startsWith(publicPath));
+    return publicPaths.some((publicPath) => {
+        if (publicPath.endsWith("/*")) {
+            // Handle wildcard patterns like "/api/auth/*"
+            return path.startsWith(publicPath.slice(0, -2));
+        }
+        return path === publicPath || path.startsWith(publicPath + "/");
+    });
 }
 
 export function middleware(request: NextRequest) {
@@ -17,24 +25,19 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // For protected paths, redirect to login if no session cookie
-    // Note: Full session validation happens on the server side
+    // For protected paths, check session cookie
     const hasSessionCookie = request.cookies.has("better-auth.session_token");
 
+    // Redirect to login if no session cookie
     if (!hasSessionCookie) {
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("callbackUrl", path);
         return NextResponse.redirect(loginUrl);
     }
 
-    // Redirect authenticated users away from auth pages
-    if (hasSessionCookie && (path === "/login" || path === "/register")) {
-        return NextResponse.redirect(new URL("/", request.url));
-    }
-
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+    matcher: ["/((?!api/trpc|api/auth|_next/static|_next/image|favicon.ico).*)"],
 };
