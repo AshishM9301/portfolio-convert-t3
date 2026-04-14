@@ -97,9 +97,9 @@ export default function EditPage() {
                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      {project.thumbnail && (
+                      {project.image && (
                         <img
-                          src={project.thumbnail}
+                          src={project.image.url}
                           alt={project.title}
                           className="w-16 h-16 object-cover rounded-md"
                         />
