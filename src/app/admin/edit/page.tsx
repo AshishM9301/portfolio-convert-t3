@@ -18,7 +18,7 @@ export default function EditPage() {
   const deleteMutation = api.admin.projectDelete.useMutation({
     onSuccess: () => {
       toast.success("Project deleted");
-      utils.admin.projectList.invalidate();
+      void utils.admin.projectList.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);

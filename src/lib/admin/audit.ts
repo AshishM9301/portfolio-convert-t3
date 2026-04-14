@@ -91,7 +91,7 @@ export async function getAuditLogs(options: {
   return { logs, total };
 }
 
-export async function getRecentAuditLogs(limit: number = 10): Promise<Array<{
+export async function getRecentAuditLogs(limit = 10): Promise<Array<{
   id: string;
   action: string;
   resourceId: string | null;

@@ -8,7 +8,7 @@ import { storeSession, deleteSession, type SessionData } from "./session-store";
 // KEY GENERATION AND HASHING
 // ============================================================================
 
-export function generateSecureKey(length: number = 8): string {
+export function generateSecureKey(length = 8): string {
   const charset =
     "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
   let result = "";

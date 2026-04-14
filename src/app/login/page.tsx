@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Facebook } from "lucide-react";
+import { FaFacebook as Facebook } from "react-icons/fa";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const handwrittenFont = Caveat({ subsets: ["latin"], weight: ["700"] });

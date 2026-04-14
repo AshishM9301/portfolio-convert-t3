@@ -58,7 +58,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
                 setState((prev) => ({
                     ...prev,
                     status: "uploading",
-                    progress: 0,
+                    progress: 50,
                     preview: e.target?.result as string,
                     fileName: file.name,
                     error: undefined,
@@ -67,25 +67,26 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             reader.readAsDataURL(file);
 
             try {
-                const { uploadFile: upload } = await import("@/lib/firebase");
-                const { uploadTask, cancel } = upload(file, path, (progress) => {
-                    setState((prev) => ({
-                        ...prev,
-                        progress: progress.progress,
-                        status: progress.status === "success" ? "success" : "uploading",
-                        preview: progress.downloadUrl ?? prev.preview,
-                    }));
-                    if (progress.status === "success") {
-                        onChange?.(progress.downloadUrl);
-                    }
+                // Convert to base64 directly (no Firebase upload)
+                const base64 = await new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result as string);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
                 });
 
-                uploadControllerRef.current = { cancel };
+                setState((prev) => ({
+                    ...prev,
+                    status: "success",
+                    progress: 100,
+                    preview: base64,
+                }));
+                onChange?.(base64);
             } catch (err) {
                 setState((prev) => ({
                     ...prev,
                     status: "error",
-                    error: "Failed to initialize upload. Firebase may not be configured.",
+                    error: "Failed to process image",
                 }));
             }
         };
@@ -99,7 +100,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
 
             const file = e.dataTransfer.files[0];
             if (file) {
-                uploadFile(file);
+                void uploadFile(file);
             }
         };
 
@@ -118,7 +119,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
         const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
-                uploadFile(file);
+                void uploadFile(file);
             }
         };
 

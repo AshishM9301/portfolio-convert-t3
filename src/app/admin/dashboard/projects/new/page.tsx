@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +17,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useAdminAuthHeader } from "@/hooks/use-admin-session";
 import { projectSchema } from "@/types/admin";
+import { FileUpload } from "@/components/ui/file-upload";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -57,6 +58,7 @@ export default function NewProjectPage() {
       ...data,
       repoUrl: data.repoUrl || undefined,
       liveUrl: data.liveUrl || undefined,
+      thumbnail: data.thumbnail?.trim() ? data.thumbnail : undefined,
     });
   });
 
@@ -173,15 +175,15 @@ export default function NewProjectPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="thumbnail">Thumbnail URL</Label>
-              <Input
-                id="thumbnail"
-                placeholder="/images/project.png"
-                {...form.register("thumbnail")}
+              <Label>Thumbnail</Label>
+              <FileUpload
+                value={form.watch("thumbnail")}
+                onChange={(url) => form.setValue("thumbnail", url ?? "")}
+                accept="image/*"
+                maxSizeMB={5}
+                path="portfolio/thumbnails"
+                disabled={createMutation.isPending}
               />
-              <p className="text-xs text-gray-500">
-                Place images in the public/images folder
-              </p>
             </div>
 
             <div className="flex items-center space-x-4">

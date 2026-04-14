@@ -60,7 +60,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
 export async function sendVerificationKeyEmail(
   email: string,
   key: string,
-  expiresIn: number = 10
+  expiresIn = 10
 ): Promise<boolean> {
   const html = `
     <!DOCTYPE html>

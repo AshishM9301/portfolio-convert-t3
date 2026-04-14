@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { projectSchema } from "@/types/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -83,7 +83,7 @@ export default function AddProjectPage() {
         if (token) {
             // Has session, submit directly
             submitMutation.mutate({
-                projectData: data as ProjectFormData,
+                projectData: data,
                 sessionToken: token,
             });
         } else if (keyStatus === "verified" && keyInput.length === 8) {
@@ -92,7 +92,7 @@ export default function AddProjectPage() {
             submitMutation.mutate({
                 email,
                 key: keyInput,
-                projectData: data as ProjectFormData,
+                projectData: data,
             });
         } else {
             // Need to request key first

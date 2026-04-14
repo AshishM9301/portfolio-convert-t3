@@ -5,7 +5,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { api } from "@/trpc/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { projectSchema } from "@/types/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +68,7 @@ export default function EditProjectPage() {
         techStack: p.techStack,
         repoUrl: p.repoUrl ?? "",
         liveUrl: p.liveUrl ?? "",
-        thumbnail: p.thumbnail ?? "",
+        thumbnail: p.image?.url ?? "",
         featured: p.featured,
         sortOrder: p.sortOrder,
       });

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react'
-import { Mail, FileText, Linkedin, Instagram, ExternalLink, Github } from "lucide-react"
+import { Mail, FileText,ExternalLink,  } from "lucide-react"
+import { FaLinkedin as Linkedin, FaTwitter as Twitter, FaGithub as Github, FaInstagram as Instagram } from "react-icons/fa"
 import { cx } from 'class-variance-authority';
 
 type Props = {

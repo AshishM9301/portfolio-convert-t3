@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Search, Edit, Trash2, ExternalLink, Github } from "lucide-react";
+import { Loader2, Plus, Search, Edit, Trash2, ExternalLink } from "lucide-react";
+import { FaGithub as Github } from "react-icons/fa";
+
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -53,7 +55,7 @@ export default function AdminDashboardPage() {
     setDeleteTitle(title);
   };
 
-  const filteredProjects = data?.projects.filter((project) =>
+  const filteredProjects = data?.projects.filter((project: any) =>
     project.title.toLowerCase().includes(search.toLowerCase())
   ) ?? [];
 
@@ -101,7 +103,7 @@ export default function AdminDashboardPage() {
         </Card>
       ) : (
         <div className="grid gap-4">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project: any) => (
             <Card key={project.id}>
               <CardContent className="p-4">
                 <div className="flex gap-4">
@@ -130,7 +132,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {project.techStack.slice(0, 4).map((tech) => (
+                      {project.techStack.slice(0, 4).map((tech: any) => (
                         <Badge key={tech} variant="outline" className="text-xs">
                           {tech}
                         </Badge>

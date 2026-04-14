@@ -15,7 +15,8 @@ let storage: ReturnType<typeof getStorage>;
 
 function getFirebaseApp(): FirebaseApp {
     if (!app) {
-        app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+        const existingApps = getApps();
+        app = existingApps.length === 0 ? initializeApp(firebaseConfig) : existingApps[0]!;
     }
     return app;
 }
@@ -45,7 +46,7 @@ export interface UploadProgress {
 
 export function uploadFile(
     file: File,
-    path: string = "portfolio",
+    path = "portfolio",
     onProgress?: (progress: UploadProgress) => void
 ): { uploadTask: UploadTask; cancel: () => void } {
     const storageRef: StorageReference = ref(getFirebaseStorage(), `${path}/${Date.now()}_${file.name}`);
@@ -72,15 +73,17 @@ export function uploadFile(
                 error: error.message,
             });
         },
-        async () => {
-            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-            onProgress?.({
-                progress: 100,
-                bytesTransferred: file.size,
-                totalBytes: file.size,
-                status: "success",
-                downloadUrl,
-            });
+        () => {
+            void (async () => {
+                const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                onProgress?.({
+                    progress: 100,
+                    bytesTransferred: file.size,
+                    totalBytes: file.size,
+                    status: "success",
+                    downloadUrl,
+                });
+            })();
         }
     );
 
@@ -90,23 +93,27 @@ export function uploadFile(
     };
 }
 
-export async function uploadFileSimple(file: File, path: string = "portfolio"): Promise<UploadResult> {
+export async function uploadFileSimple(file: File, path = "portfolio"): Promise<UploadResult> {
     const storageRef: StorageReference = ref(getFirebaseStorage(), `${path}/${Date.now()}_${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     return new Promise((resolve, reject) => {
         uploadTask.on(
             "state_changed",
-            () => {},
+            () => {
+                // Intentionally empty - progress handled in callback
+            },
             (error) => reject(error),
-            async () => {
-                const url = await getDownloadURL(uploadTask.snapshot.ref);
-                resolve({
-                    url,
-                    fileName: file.name,
-                    fileType: file.type,
-                    size: file.size,
-                });
+            () => {
+                void (async () => {
+                    const url = await getDownloadURL(uploadTask.snapshot.ref);
+                    resolve({
+                        url,
+                        fileName: file.name,
+                        fileType: file.type,
+                        size: file.size,
+                    });
+                })();
             }
         );
     });

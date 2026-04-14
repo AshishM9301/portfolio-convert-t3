@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Loader2, Pencil, Trash2 } from "lucide-react";
@@ -65,17 +64,16 @@ export default function ProjectCard({
         <div className="relative w-full h-96">
           {showAdminActions && (
             <div className="absolute top-2 right-2 z-10 flex gap-1.5">
-              <Button
-                type="button"
-                variant="secondary"
-                size="icon"
-                className="h-9 w-9 shrink-0 shadow-md bg-blue-300 hover:bg-blue-500"
-                asChild
-              >
-                <Link href={editHref} aria-label={`Edit ${title}`}>
+              <Link href={editHref} aria-label={`Edit ${title}`}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon"
+                  className="h-9 w-9 shrink-0 shadow-md bg-blue-300 hover:bg-blue-500"
+                >
                   <Pencil className="h-4 w-4 text-white" />
-                </Link>
-              </Button>
+                </Button>
+              </Link>
               <Button
                 type="button"
                 variant="secondary"
@@ -89,13 +87,18 @@ export default function ProjectCard({
             </div>
           )}
           <Link href={demoUrl ?? "#"} target="_blank" rel="noopener noreferrer">
-            <Image
-              src={imageUrl || "/placeholder.svg"}
-              alt={`${title} screenshot`}
-              fill
-              className="w-full border border-gray-200 dark:border-gray-700 rounded-md object-contain"
-              loading="lazy"
-            />
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={`${title} screenshot`}
+                className="w-full border border-gray-200 dark:border-gray-700 rounded-md object-contain max-w-full max-h-full"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full border border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <span className="text-muted-foreground">No image</span>
+              </div>
+            )}
           </Link>
         </div>
       </div>

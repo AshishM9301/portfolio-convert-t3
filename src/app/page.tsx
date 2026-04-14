@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Mail, FileText, Linkedin, Instagram, ExternalLink, Github } from "lucide-react"
+import { Mail, FileText, ExternalLink } from "lucide-react"
+import { FaInstagram as Instagram } from "react-icons/fa";
 import { Caveat } from "next/font/google"
 import SectionHeading from "@/components/section-heading"
 import ExperienceCard from "@/components/experience-card"

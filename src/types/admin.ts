@@ -10,7 +10,7 @@ export const projectSchema = z.object({
     techStack: z.array(z.string()).optional(),
     repoUrl: z.string().url().nullable().optional(),
     liveUrl: z.string().url().nullable().optional(),
-    thumbnail: z.string().nullable().optional(),
+    thumbnail: z.string().nullable().optional(), // base64 string
     featured: z.boolean(),
     sortOrder: z.number().int(),
 });

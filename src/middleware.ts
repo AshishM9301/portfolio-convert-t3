@@ -36,7 +36,7 @@ function isAdminPath(path: string): boolean {
 // Check for valid admin authorization header
 function hasValidAdminAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader?.startsWith("Bearer ")) {
     return false;
   }
   // The token validation happens in the API route, not middleware
@@ -82,7 +82,7 @@ export function middleware(request: NextRequest) {
     // The actual token validation happens in the tRPC adminProcedure
     const authHeader = request.headers.get("authorization");
     
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader?.startsWith("Bearer ")) {
       // No auth header - redirect to admin login page
       // But only redirect for HTML requests
       const accept = request.headers.get("accept") || "";

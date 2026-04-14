@@ -187,14 +187,26 @@ export const adminRouter = createTRPCRouter({
         });
       }
 
+      const { thumbnail, ...rest } = input;
+
       const project = await db.project.create({
         data: {
-          ...input,
+          ...rest,
           slug,
-          thumbnail: input.thumbnail || null,
           repoUrl: input.repoUrl || null,
           liveUrl: input.liveUrl || null,
+          ...(thumbnail && {
+            image: {
+              create: {
+                url: thumbnail,
+                type: "project_thumbnail",
+                mimeType: "image/png", // Will be set properly on client
+                size: thumbnail.length,
+              },
+            },
+          }),
         },
+        include: { image: true },
       });
 
       await createAuditLog({
@@ -232,7 +244,7 @@ export const adminRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { id, ...data } = input;
+      const { id, thumbnail, ...data } = input;
       const { adminSession, adminToken } = ctx as {
         adminSession: { email: string };
         adminToken: string;
@@ -262,15 +274,34 @@ export const adminRouter = createTRPCRouter({
         }
       }
 
+      // Handle image update
+      if (thumbnail !== undefined) {
+        // Delete existing image
+        await db.image.deleteMany({ where: { projectId: id } });
+        
+        // Create new image if thumbnail provided
+        if (thumbnail) {
+          await db.image.create({
+            data: {
+              url: thumbnail,
+              type: "project_thumbnail",
+              mimeType: "image/png",
+              size: thumbnail.length,
+              projectId: id,
+            },
+          });
+        }
+      }
+
       const project = await db.project.update({
         where: { id },
         data: {
           ...data,
           slug,
-          thumbnail: data.thumbnail ?? null,
           repoUrl: data.repoUrl ?? null,
           liveUrl: data.liveUrl ?? null,
         },
+        include: { image: true },
       });
 
       await createAuditLog({
@@ -350,21 +381,7 @@ export const adminRouter = createTRPCRouter({
           orderBy: { deletedAt: "desc" },
           skip,
           take: limit,
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            description: true,
-            techStack: true,
-            repoUrl: true,
-            liveUrl: true,
-            thumbnail: true,
-            featured: true,
-            sortOrder: true,
-            createdAt: true,
-            updatedAt: true,
-            deletedAt: true,
-          },
+          include: { image: true },
         }),
         db.project.count({ where }),
       ]);
@@ -443,20 +460,7 @@ export const adminRouter = createTRPCRouter({
           orderBy: [{ featured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
           skip,
           take: limit,
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            description: true,
-            techStack: true,
-            repoUrl: true,
-            liveUrl: true,
-            thumbnail: true,
-            featured: true,
-            sortOrder: true,
-            createdAt: true,
-            updatedAt: true,
-          },
+          include: { image: true },
         }),
         db.project.count({ where }),
       ]);
@@ -475,6 +479,7 @@ export const adminRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const project = await db.project.findUnique({
         where: { id: input.id },
+        include: { image: true },
       });
 
       if (!project || project.deletedAt) {
@@ -509,18 +514,7 @@ export const adminRouter = createTRPCRouter({
       const projects = await db.project.findMany({
         where,
         orderBy: [{ featured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          description: true,
-          techStack: true,
-          repoUrl: true,
-          liveUrl: true,
-          thumbnail: true,
-          featured: true,
-          createdAt: true,
-        },
+        include: { image: true },
       });
 
       return { projects };
@@ -531,6 +525,7 @@ export const adminRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const project = await db.project.findUnique({
         where: { slug: input.slug },
+        include: { image: true },
       });
 
       if (!project || project.deletedAt) {
@@ -971,14 +966,25 @@ export const adminRouter = createTRPCRouter({
       }
 
       // Create the project
+      const { thumbnail, ...rest } = projectData;
       const project = await db.project.create({
         data: {
-          ...projectData,
+          ...rest,
           slug,
-          thumbnail: projectData.thumbnail || null,
           repoUrl: projectData.repoUrl || null,
           liveUrl: projectData.liveUrl || null,
+          ...(thumbnail && {
+            image: {
+              create: {
+                url: thumbnail,
+                type: "project_thumbnail",
+                mimeType: "image/png",
+                size: thumbnail.length,
+              },
+            },
+          }),
         },
+        include: { image: true },
       });
 
       await createAuditLog({

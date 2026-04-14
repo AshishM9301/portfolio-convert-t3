@@ -73,7 +73,7 @@ export async function createOneTimeKey(
   });
 
   // Send verification email (async, non-blocking)
-  sendVerificationKeyEmail(email, plainKey, expiryMinutes).then((sent) => {
+  void sendVerificationKeyEmail(email, plainKey, expiryMinutes).then((sent) => {
     if (!sent) {
       console.log("[Key] Email not sent - key displayed for development");
     }

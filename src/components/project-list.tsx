@@ -15,6 +15,13 @@ interface Project {
     thumbnail: string | null;
     featured: boolean;
     createdAt: Date;
+    image?: {
+        id: string;
+        url: string;
+        type: string;
+        mimeType: string;
+        size: number;
+    } | null;
 }
 
 interface ProjectListProps {
@@ -55,7 +62,7 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
                     key={project.id}
                     projectId={project.id}
                     title={project.title}
-                    imageUrl={project.thumbnail ?? "/images/placeholder.png"}
+                    imageUrl={project.image?.url ?? ""}
                     description={project.description}
                     technologies={project.techStack}
                     demoUrl={project.liveUrl ?? "#"}

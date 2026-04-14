@@ -49,12 +49,12 @@ export default function AdminTrashPage() {
             <CardDescription>Open the admin add flow or dashboard with your session to manage trash.</CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2">
-            <Button asChild variant="outline" className="flex-1">
-              <Link href="/admin">Admin</Link>
-            </Button>
-            <Button asChild className="flex-1">
-              <Link href="/admin/add">Add / session</Link>
-            </Button>
+            <Link href="/admin">
+              <Button variant="outline" className="flex-1">Admin</Button>
+            </Link>
+            <Link href="/admin/add">
+              <Button className="flex-1">Add / session</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -66,12 +66,12 @@ export default function AdminTrashPage() {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/admin/edit">
+            <Link href="/admin/edit">
+              <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
-              </Link>
-            </Button>
+              </Button>
+            </Link>
             <h1 className="text-xl font-semibold">Trash</h1>
           </div>
           <p className="text-sm text-muted-foreground">
