@@ -46,7 +46,7 @@ const LinkedInComponent = ({ sm }: Props) => {
 
 const TwitterComponent = ({ sm }: Props) => {
     return (
-        <Link href="https://x.com/AshishM9301" target="_blank" aria-label="Twitter/X" className={cx(!sm ? "p-2 rounded-full border border-gray-300 dark:border-gray-700" : "", "hover:scale-110 transition-all duration-300")}>
+        <Link href="https://x.com/AshishKrMahto" target="_blank" aria-label="Twitter/X" className={cx(!sm ? "p-2 rounded-full border border-gray-300 dark:border-gray-700" : "", "hover:scale-110 transition-all duration-300")}>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
