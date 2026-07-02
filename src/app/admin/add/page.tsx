@@ -26,6 +26,7 @@ export default function AddProjectPage() {
     const [techInput, setTechInput] = useState("");
     const [keyStatus, setKeyStatus] = useState<"idle" | "pending" | "verified">("idle");
     const [keyInput, setKeyInput] = useState("");
+    const [devKey, setDevKey] = useState<string | null>(null);
     const { token, login } = useAdminSession();
     const router = useRouter();
 
@@ -47,7 +48,23 @@ export default function AddProjectPage() {
     const requestKeyMutation = api.admin.requestKey.useMutation({
         onSuccess: (data) => {
             setKeyStatus("pending");
-            toast.success(data.message);
+            // Surface the actual send outcome, not a blanket success.
+            if (data.emailSent) {
+                setDevKey(null);
+                toast.success(data.message);
+            } else if (data.devKey) {
+                // Dev mode — email failed but the server returned the key
+                // so the developer can complete the flow.
+                setDevKey(data.devKey);
+                setKeyInput(data.devKey);
+                toast.warning(
+                    `${data.message} — dev key copied to the input below.`,
+                    { duration: 60_000 },
+                );
+            } else {
+                setDevKey(null);
+                toast.error(data.message);
+            }
         },
         onError: (error) => {
             toast.error(error.message);
@@ -298,22 +315,32 @@ export default function AddProjectPage() {
                                         </div>
 
                                         {keyStatus === "pending" && (
-                                            <div className="flex gap-4">
-                                                <Input
-                                                    placeholder="Enter 8-character key"
-                                                    value={keyInput}
-                                                    onChange={(e) => setKeyInput(e.target.value.toUpperCase())}
-                                                    maxLength={8}
-                                                    className="font-mono tracking-widest"
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    variant="secondary"
-                                                    onClick={() => setKeyStatus("verified")}
-                                                    disabled={keyInput.length !== 8}
-                                                >
-                                                    Verify
-                                                </Button>
+                                            <div className="space-y-2">
+                                                <div className="flex gap-4">
+                                                    <Input
+                                                        placeholder="Enter 8-character key"
+                                                        value={keyInput}
+                                                        onChange={(e) => setKeyInput(e.target.value.toUpperCase())}
+                                                        maxLength={8}
+                                                        className="font-mono tracking-widest"
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="secondary"
+                                                        onClick={() => setKeyStatus("verified")}
+                                                        disabled={keyInput.length !== 8}
+                                                    >
+                                                        Verify
+                                                    </Button>
+                                                </div>
+                                                {devKey && (
+                                                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                                                        Dev mode (no email configured) — use this key:{" "}
+                                                        <code className="select-all rounded bg-amber-100 px-1 py-0.5 font-mono text-amber-900 dark:bg-amber-900/30 dark:text-amber-100">
+                                                            {devKey}
+                                                        </code>
+                                                    </p>
+                                                )}
                                             </div>
                                         )}
 

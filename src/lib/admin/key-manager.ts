@@ -12,7 +12,11 @@ import bcrypt from "bcryptjs";
 export interface KeyRequestResult {
   success: boolean;
   message: string;
-  key?: string; // Plain text key (only returned for immediate display)
+  /** Plain text key. Only populated in development when email delivery
+   *  fails or no provider is configured — never in production. */
+  devKey?: string;
+  /** Whether the email was actually delivered. */
+  emailSent: boolean;
   expiresAt?: Date;
 }
 
@@ -33,6 +37,7 @@ export async function createOneTimeKey(
     return {
       success: false,
       message: "This email is not authorized for admin access",
+      emailSent: false,
     };
   }
 
@@ -50,6 +55,7 @@ export async function createOneTimeKey(
     return {
       success: false,
       message: "A verification key is already active. Check your email or wait for it to expire.",
+      emailSent: false,
     };
   }
 
@@ -72,19 +78,57 @@ export async function createOneTimeKey(
     },
   });
 
-  // Send verification email (async, non-blocking)
-  void sendVerificationKeyEmail(email, plainKey, expiryMinutes).then((sent) => {
-    if (!sent) {
-      console.log("[Key] Email not sent - key displayed for development");
-    }
+  // Send verification email — await so the caller knows the actual outcome.
+  const sendResult = await sendVerificationKeyEmail(
+    email,
+    plainKey,
+    expiryMinutes,
+  );
+
+  const isDev = env.NODE_ENV !== "production";
+  const hasProvider = !!env.SMTP_HOST;
+
+  // Structured log regardless of branch — single source of truth for ops.
+  console.log("[Key] request outcome", {
+    email: email.toLowerCase(),
+    emailSent: sendResult.ok,
+    reason: sendResult.ok ? undefined : sendResult.reason,
+    detail: sendResult.ok ? undefined : sendResult.detail,
+    nodeEnv: env.NODE_ENV,
+    hasProvider,
   });
 
-  console.log("Key generated and sent to email");
+  if (sendResult.ok) {
+    return {
+      success: true,
+      message: `Verification key sent to ${email}`,
+      emailSent: true,
+      expiresAt,
+    };
+  }
 
+  // Send failed. In development, always return the key so the developer
+  // can complete the flow locally without a working email provider.
+  if (isDev) {
+    return {
+      success: true,
+      message: hasProvider
+        ? "Email send failed (dev mode — see server logs)"
+        : "Verification key ready (dev mode — no email provider configured)",
+      devKey: plainKey,
+      emailSent: false,
+      expiresAt,
+    };
+  }
+
+  // Production: never leak the key. Tell the user the truth.
+  const message = hasProvider
+    ? "We couldn't send the email right now. Please try again in a moment."
+    : "Email service is not configured. Please contact the site administrator.";
   return {
-    success: true,
-    message: `Verification key sent to ${email}`,
-    key: plainKey, // Returned for development/testing
+    success: false,
+    message,
+    emailSent: false,
     expiresAt,
   };
 }

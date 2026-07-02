@@ -66,13 +66,28 @@ export const adminRouter = createTRPCRouter({
           action: "key.request",
           ipAddress,
           userAgent,
-          newValue: { email: input.email, success: false, reason: result.message },
+          newValue: {
+            email: input.email,
+            success: false,
+            reason: result.message,
+            emailSent: result.emailSent,
+          },
+        });
+
+        // Production failure: surface a safe error to the client. In dev,
+        // key-manager always returns success:true with devKey, so we never
+        // reach this branch in dev.
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: result.message,
         });
       }
 
       return {
         success: result.success,
         message: result.message,
+        emailSent: result.emailSent,
+        devKey: result.devKey, // only present in development
         expiresIn: result.expiresAt
           ? `${Math.ceil((result.expiresAt.getTime() - Date.now()) / 60000)} minutes`
           : undefined,

@@ -28,7 +28,18 @@ export default function AdminAuthPage() {
   const requestKeyMutation = api.admin.requestKey.useMutation({
     onSuccess: (data) => {
       console.log("Successfully requested keys", data);
-      toast.success(data.message);
+      // Surface the actual send outcome, not a blanket success.
+      if (data.emailSent) {
+        toast.success(data.message);
+      } else if (data.devKey) {
+        // Dev mode — email failed but the server returned the key.
+        toast.warning(
+          `${data.message} — dev key: ${data.devKey}`,
+          { duration: 60_000 },
+        );
+      } else {
+        toast.error(data.message);
+      }
       setRequestedEmail(form.getValues("email"));
       setView("verify");
     },

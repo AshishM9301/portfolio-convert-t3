@@ -30,9 +30,23 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_URL: z.string().url().optional(),
     UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
-    // Email Service (optional - for sending verification keys)
-    RESEND_API_KEY: z.string().optional(),
-    SENDGRID_API_KEY: z.string().optional(),
+    // Email Service (optional - for sending verification keys via SMTP)
+    // Transport-agnostic SMTP config. Works with Resend SMTP, Brevo, Mailgun,
+    // Zoho, Amazon SES, Gmail (OAuth2), or any other SMTP provider.
+    SMTP_HOST: z.string().optional(),
+    SMTP_PORT: z.coerce.number().int().min(1).max(65535).optional(),
+    SMTP_SECURE: z
+      .enum(["true", "false"])
+      .optional()
+      .transform((v) => v === "true"),
+    SMTP_USER: z.string().optional(),
+    SMTP_PASSWORD: z.string().optional(),
+    SMTP_FROM: z.string().optional(),
+    // OAuth2 (used when sending via Gmail SMTP)
+    SMTP_OAUTH_CLIENT_ID: z.string().optional(),
+    SMTP_OAUTH_CLIENT_SECRET: z.string().optional(),
+    SMTP_OAUTH_REFRESH_TOKEN: z.string().optional(),
+    SMTP_OAUTH_USER: z.string().optional(),
   },
 
   /**
@@ -71,8 +85,16 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
 
     // Email Service
-    RESEND_API_KEY: process.env.RESEND_API_KEY,
-    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    SMTP_SECURE: process.env.SMTP_SECURE,
+    SMTP_USER: process.env.SMTP_USER,
+    SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+    SMTP_FROM: process.env.SMTP_FROM,
+    SMTP_OAUTH_CLIENT_ID: process.env.SMTP_OAUTH_CLIENT_ID,
+    SMTP_OAUTH_CLIENT_SECRET: process.env.SMTP_OAUTH_CLIENT_SECRET,
+    SMTP_OAUTH_REFRESH_TOKEN: process.env.SMTP_OAUTH_REFRESH_TOKEN,
+    SMTP_OAUTH_USER: process.env.SMTP_OAUTH_USER,
 
     // Client
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
